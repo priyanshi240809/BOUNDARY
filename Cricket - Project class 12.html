@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOUNDARY - Cricket Management</title>
+
+    <style>
+        body {
+            background: #081b17;
+            color: white;
+            font-family: Arial;
+            text-align: center;
+            padding: 25px;
+        }
+
+        .container {
+            max-width: 750px;
+            margin: auto;
+            background: #12352b;
+            padding: 25px;
+            border-radius: 18px;
+        }
+
+        h1 {
+            color: #52e6a5;
+        }
+
+        input,
+        select {
+            padding: 12px;
+            margin: 7px;
+            border-radius: 8px;
+            border: none;
+            width: 80%;
+            max-width: 300px;
+        }
+
+        .scoreboard {
+            background: #09251d;
+            padding: 22px;
+            margin: 20px 0;
+            border-radius: 15px;
+        }
+
+        .score {
+            font-size: 60px;
+            color: #52e6a5;
+            font-weight: bold;
+        }
+
+        button {
+            padding: 13px 20px;
+            margin: 6px;
+            border: none;
+            border-radius: 8px;
+            background: #52e6a5;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #b5f5d8;
+        }
+
+        .next {
+            background: #ffb454;
+        }
+
+        #result {
+            color: #ffcf70;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        #matchSummary {
+            background: #ffffff;
+            color: #172b24;
+            padding: 22px;
+            margin-top: 25px;
+            border-radius: 15px;
+            border: 2px solid #198754;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        #matchSummary h2 {
+            text-align: center;
+            color: #198754;
+            margin-bottom: 20px;
+        }
+
+        #matchSummary h3 {
+            background: #198754;
+            color: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 18px;
+        }
+
+        #matchSummary p {
+            font-size: 16px;
+            padding: 5px;
+            margin: 5px;
+        }
+
+#matchSummary .winner-banner {
+    background: #fff3cd;
+    color: #856404;
+    border: 2px solid #ffc107;
+    text-align: center;
+    padding: 14px;
+    border-radius: 10px;
+}
+
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <h1>🏏 BOUNDARY</h1>
+        <h3>CRICKET SCORE MANAGEMENT SYSTEM</h3>
+
+        <h3>CREATE YOUR MATCH</h3>
+
+        <input id="teamA" placeholder="Enter Team A Name">
+        <br>
+
+        <input id="teamB" placeholder="Enter Team B Name">
+        <br>
+
+        <label>Overs per innings:</label>
+        <br>
+        <select id="oversLimit">
+            <option value="5">5 Overs</option>
+            <option value="10" selected>10 Overs</option>
+            <option value="20">20 Overs</option>
+            <option value="50">50 Overs</option>
+        </select>
+        <br>
+
+        <label>Choose batting first:</label>
+        <br>
+        <select id="firstBat">
+            <option value="A">Team A</option>
+            <option value="B">Team B</option>
+        </select>
+        <br>
+
+        <h3>PLAYER MANAGEMENT</h3>
+
+        <div class="scoreboard">
+            <h3 id="teamALabel">TEAM A PLAYERS</h3>
+            <input id="playerA" placeholder="Enter Team A player name">
+            <button onclick="addPlayer('A')">ADD PLAYER</button>
+            <ul id="listA"></ul>
+        </div>
+
+        <div class="scoreboard">
+            <h3 id="teamBLabel">TEAM B PLAYERS</h3>
+            <input id="playerB" placeholder="Enter Team B player name">
+            <button onclick="addPlayer('B')">ADD PLAYER</button>
+            <ul id="listB"></ul>
+        </div>
+
+        <button onclick="startMatch()">START MATCH</button>
+
+        <hr>
+
+        <h2 id="matchTitle">TEAM A vs TEAM B</h2>
+
+        <div class="scoreboard">
+
+            <h3 id="innings">INNINGS 1</h3>
+
+            <h2 id="battingTeam">Waiting for match...</h2>
+
+            <div class="score" id="score">0/0</div>
+
+            <h3 id="overs">Overs: 0.0</h3>
+
+            <h3 id="runRate">Run Rate: 0.00</h3>
+
+            <h3 id="target">Target: -</h3>
+
+        </div>
+        <div class="scoreboard">
+            <h3>OPENING BATSMEN</h3>
+
+            <label>Striker:</label>
+            <br>
+            <select id="strikerSelect">
+                <option value="">Select striker</option>
+            </select>
+
+            <br>
+
+            <label>Non-striker:</label>
+            <br>
+            <select id="nonStrikerSelect">
+                <option value="">Select non-striker</option>
+            </select>
+
+            <br>
+
+            <button onclick="setOpeners()">SET BATSMEN</button>
+
+            <h3 id="batterDisplay">No batsmen selected</h3>
+
+            <h3>INDIVIDUAL SCORES</h3>
+            <div id="playerScores">No scores yet</div>
+        </div>
+        <h2>SCORING</h2>
+
+        <div>
+            <button onclick="addRuns(0)">0</button>
+            <button onclick="addRuns(1)">1</button>
+            <button onclick="addRuns(2)">2</button>
+            <button onclick="addRuns(3)">3</button>
+            <button onclick="addRuns(4)">4</button>
+            <button onclick="addRuns(6)">6</button>
+        </div>
+
+        <button onclick="addWicket()">WICKET</button>
+
+        <br>
+
+        <button class="next" onclick="nextInnings()">
+            END INNINGS / SHOW RESULT
+        </button>
+
+        <h2 id="result"></h2>
+
+        <div id="matchSummary"></div>
+
+    </div>
+
+    <script>
+
+        let teams = { A: "Team A", B: "Team B" };
+        let scores = [];
+        let inningsNumber = 1;
+        let batting = "A";
+        let oversLimit = 10;
+
+        // Store players for both teams
+        let players = {
+            A: [],
+            B: []
+        };
+
+        let battingStats = {
+            A: {},
+            B: {}
+        };
+
+        let striker = "";
+        let nonStriker = "";
+
+        // Add a player
+        function addPlayer(team) {
+
+            let input = document.getElementById(
+                team === "A" ? "playerA" : "playerB"
+            );
+
+            let name = input.value.trim();
+
+            if (name === "") {
+                alert("Please enter a player name!");
+                return;
+            }
+
+            if (players[team].length >= 11) {
+                alert("Maximum 11 players allowed!");
+                return;
+            }
+
+            players[team].push(name);
+
+            input.value = "";
+
+            showPlayers(team);
+        }
+
+        // Display the player list
+        function showPlayers(team) {
+
+            let list = document.getElementById(
+                team === "A" ? "listA" : "listB"
+            );
+
+            list.innerHTML = "";
+
+            players[team].forEach(function (name, index) {
+
+                let item = document.createElement("li");
+
+                item.textContent = name + " ";
+
+                let removeButton = document.createElement("button");
+
+                removeButton.textContent = "REMOVE";
+
+                removeButton.onclick = function () {
+                    removePlayer(team, index);
+                };
+
+                item.appendChild(removeButton);
+
+                list.appendChild(item);
+
+            });
+
+        }
+
+        // Remove a player
+        function removePlayer(team, index) {
+
+            players[team].splice(index, 1);
+
+            showPlayers(team);
+
+        }
+
+        let finished = false;
+
+        function startMatch() {
+
+            teams.A = document.getElementById("teamA").value || "Team A";
+            teams.B = document.getElementById("teamB").value || "Team B";
+
+            oversLimit = Number(document.getElementById("oversLimit").value);
+
+            batting = document.getElementById("firstBat").value;
+
+            inningsNumber = 1;
+            finished = false;
+
+            scores = [
+                { runs: 0, wickets: 0, balls: 0 }
+            ];
+
+            document.getElementById("matchTitle").innerText =
+                teams.A + " vs " + teams.B;
+            document.getElementById("teamALabel").innerText =
+                teams.A + " PLAYERS";
+
+            document.getElementById("teamBLabel").innerText =
+                teams.B + " PLAYERS";
+            document.getElementById("result").innerText = "";
+
+            updateScore();
+
+            prepareBattingStats();
+            populateBatterOptions();
+
+        }
+
+        function current() {
+            return scores[inningsNumber - 1];
+        }
+
+
+        function addRuns(value) {
+
+            if (!scores.length || finished || isOver()) return;
+
+            if (!striker || !nonStriker) {
+                alert("Please select the opening batsmen first!");
+                return;
+            }
+
+            current().runs += value;
+            current().balls++;
+
+            battingStats[batting][striker].runs += value;
+            battingStats[batting][striker].balls++;
+
+            if (value % 2 !== 0) {
+                let temp = striker;
+                striker = nonStriker;
+                nonStriker = temp;
+            }
+
+            if (current().balls % 6 === 0) {
+                let temp = striker;
+                striker = nonStriker;
+                nonStriker = temp;
+            }
+
+            checkTarget();
+            updateScore();
+            updateBatterDisplay();
+            showIndividualScores();
+        }
+
+        function prepareBattingStats() {
+
+            if (!battingStats[batting]) {
+                battingStats[batting] = {};
+            }
+
+            players[batting].forEach(function (player) {
+
+                if (!battingStats[batting][player]) {
+                    battingStats[batting][player] = {
+                        runs: 0,
+                        balls: 0
+                    };
+                }
+
+            });
+
+        }
+
+        function populateBatterOptions() {
+            let strikerList = document.getElementById("strikerSelect");
+            let nonStrikerList = document.getElementById("nonStrikerSelect");
+
+            if (!strikerList || !nonStrikerList) {
+                alert("Batsman dropdowns not found!");
+                return;
+            }
+
+            strikerList.innerHTML = '<option value="">Select Striker</option>';
+            nonStrikerList.innerHTML = '<option value="">Select Non-Striker</option>';
+            alert("Batting team: " + batting);
+            alert("Players found: " + players[batting].length);
+
+            players[batting].forEach(function (player) {
+                strikerList.add(new Option(player, player));
+                nonStrikerList.add(new Option(player, player));
+            });
+        }
+
+        function setOpeners() {
+            striker = document.getElementById("strikerSelect").value;
+            nonStriker = document.getElementById("nonStrikerSelect").value;
+
+            if (!striker || !nonStriker) {
+                alert("Please select both batsmen!");
+                return;
+            }
+
+            if (striker === nonStriker) {
+                alert("Please select two different batsmen!");
+                return;
+            }
+
+            updateBatterDisplay();
+            showIndividualScores();
+        }
+        function updateBatterDisplay() {
+
+            let display = document.getElementById("batterDisplay");
+
+            display.innerText =
+                "STRIKER: " + (striker || "Not selected") +
+                " | NON-STRIKER: " + (nonStriker || "Not selected");
+
+        }
+
+        function showIndividualScores() {
+
+            let display = document.getElementById("playerScores");
+
+            display.innerHTML = "";
+
+            players[batting].forEach(function (player) {
+
+                let stats = battingStats[batting][player];
+
+                let item = document.createElement("p");
+
+                item.textContent =
+                    player + " : " +
+                    stats.runs + " runs (" +
+                    stats.balls + " balls)";
+
+                display.appendChild(item);
+
+            });
+
+        }
+
+        function addWicket() {
+
+            if (!scores.length || finished || isOver()) return;
+
+            if (!striker || !nonStriker) {
+                alert("Please select the batsmen first!");
+                return;
+            }
+
+            if (current().wickets < 10) {
+
+                current().wickets++;
+                current().balls++;
+
+                battingStats[batting][striker].balls++;
+
+                striker = "";
+
+                alert("Wicket! Select the next batter as striker.");
+
+            }
+
+            updateScore();
+            updateBatterDisplay();
+            showIndividualScores();
+        }
+
+
+        function isOver() {
+
+            if (!scores.length) return true;
+
+            return current().balls >= oversLimit * 6 ||
+                current().wickets >= 10;
+        }
+
+        function checkTarget() {
+
+            if (inningsNumber === 2 &&
+                current().runs >= scores[0].runs + 1) {
+
+                finished = true;
+
+                document.getElementById("result").innerText =
+                    teams[batting] + " WON THE MATCH!";
+
+                showMatchSummary();
+            }
+
+        } function showMatchSummary() {
+
+            let summary = document.getElementById("matchSummary");
+
+            let first = scores[0];
+            let second = scores[1];
+
+            function getTopScorer(team) {
+
+                let topPlayer = "No scorer";
+                let highestRuns = -1;
+
+                players[team].forEach(function (player) {
+
+                    let stats = battingStats[team][player];
+
+                    if (stats && stats.runs > highestRuns) {
+                        highestRuns = stats.runs;
+                        topPlayer = player;
+                    }
+
+                });
+
+                return topPlayer + " (" + highestRuns + " runs)";
+            }
+
+let winner = document.getElementById("result").innerText;
+
+            summary.innerHTML = `
+        <h2>🏏 MATCH SUMMARY</h2>
+<h3 class="winner-banner">🏆 ${winner}</h3>
+        <h3>${teams["A"]}: ${scores[0].runs}/${scores[0].wickets}</h3>
+        <p>Overs: ${Math.floor(first.balls / 6)}.${first.balls % 6}</p>
+        <p>Top Scorer: ${getTopScorer("A")}</p>
+
+        <h3>${teams["B"]}: ${scores[1].runs}/${scores[1].wickets}</h3>
+        <p>Overs: ${Math.floor(second.balls / 6)}.${second.balls % 6}</p>
+        <p>Top Scorer: ${getTopScorer("B")}</p>
+    `;
+        }
+
+
+
+        function updateScore() {
+
+            if (!scores.length) return;
+
+            let s = current();
+
+            document.getElementById("innings").innerText =
+                "INNINGS " + inningsNumber;
+
+            document.getElementById("battingTeam").innerText =
+                teams[batting] + " BATTING";
+
+            document.getElementById("score").innerText =
+                s.runs + "/" + s.wickets;
+
+            document.getElementById("overs").innerText =
+                "Overs: " + Math.floor(s.balls / 6) +
+                "." + (s.balls % 6);
+
+            let rate = s.balls === 0 ? 0 :
+                s.runs / (s.balls / 6);
+
+            document.getElementById("runRate").innerText =
+                "Run Rate: " + rate.toFixed(2);
+
+            document.getElementById("target").innerText =
+                inningsNumber === 2 ?
+                    "Target: " + (scores[0].runs + 1) :
+                    "Target: Not Set";
+
+        }
+
+        function nextInnings() {
+
+            if (!scores.length || finished) return;
+
+            if (inningsNumber === 1) {
+
+                batting = batting === "A" ? "B" : "A";
+
+                inningsNumber = 2;
+
+                scores.push({
+                    runs: 0,
+                    wickets: 0,
+                    balls: 0
+                });
+
+                updateScore();
+                prepareBattingStats();
+                populateBatterOptions();
+            } else {
+
+                finished = true;
+
+                let first = scores[0];
+                let second = scores[1];
+
+                let result;
+
+                if (first.runs > second.runs) {
+
+                    result = teams[batting === "A" ? "B" : "A"] +
+                        " WON BY " + (first.runs - second.runs) + " RUNS!";
+
+                } else if (second.runs > first.runs) {
+
+                    result = teams[batting] +
+                        " WON BY " + (10 - second.wickets) + " WICKETS!";
+
+                } else {
+
+                    result = "MATCH TIED!";
+
+                }
+
+                document.getElementById("result").innerText = result;
+
+                showMatchSummary();
+
+            }
+
+        }
+
+    </script>
+
+</body>
+
+</html>
